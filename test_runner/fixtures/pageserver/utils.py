@@ -283,7 +283,11 @@ def timeline_delete_wait_completed(
     timeline_id: TimelineId,
     **delete_args,
 ) -> None:
-    pageserver_http.timeline_delete(tenant_id=tenant_id, timeline_id=timeline_id, **delete_args)
+    try:
+        pageserver_http.timeline_delete(tenant_id=tenant_id, timeline_id=timeline_id, **delete_args)
+    except PageserverApiException as e:
+        if e.status_code != 404:  # Timeline already doesn't exist
+            raise
     wait_timeline_detail_404(pageserver_http, tenant_id, timeline_id)
 
 

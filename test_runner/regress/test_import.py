@@ -103,6 +103,7 @@ def test_import_from_vanilla(test_output_dir, pg_bin, vanilla_pg, neon_env_build
             ".*InternalServerError.*Tenant .* not found.*",
             ".*InternalServerError.*Timeline .* not found.*",
             ".*InternalServerError.*Cannot delete timeline which has child timelines.*",
+            ".*InternalServerError.*new timeline .* has invalid disk_consistent_lsn.*",
         ]
     )
 
