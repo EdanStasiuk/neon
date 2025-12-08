@@ -39,6 +39,7 @@ def test_change_pageserver(
     """
     num_connections = 3
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     neon_env_builder.enable_pageserver_remote_storage(
         remote_storage_kind=RemoteStorageKind.MOCK_S3,

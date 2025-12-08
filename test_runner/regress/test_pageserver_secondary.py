@@ -85,6 +85,7 @@ def test_location_conf_churn(neon_env_builder: NeonEnvBuilder, make_httpserver, 
     states are valid, so that we may test it in this way: the API should always
     work as long as the tenant exists.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 3
     neon_env_builder.enable_pageserver_remote_storage(
         remote_storage_kind=s3_storage(),
@@ -336,6 +337,7 @@ def test_live_migration(neon_env_builder: NeonEnvBuilder):
     """
     Test the sequence of location states that are used in a live migration.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     remote_storage_kind = RemoteStorageKind.MOCK_S3
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind=remote_storage_kind)
@@ -492,6 +494,7 @@ def test_heatmap_uploads(neon_env_builder: NeonEnvBuilder):
     """
     Test the sequence of location states that are used in a live migration.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()  # initial_tenant_conf=TENANT_CONF)
     assert isinstance(env.pageserver_remote_storage, LocalFsStorage)
 
@@ -576,6 +579,7 @@ def test_secondary_downloads(neon_env_builder: NeonEnvBuilder):
     # For debug of https://github.com/neondatabase/neon/issues/6966
     neon_env_builder.rust_log_override = "DEBUG"
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     neon_env_builder.enable_pageserver_remote_storage(
         remote_storage_kind=RemoteStorageKind.MOCK_S3,
@@ -1166,6 +1170,7 @@ def test_io_metrics_match_secondary_timeline_lifecycle(
     Check that IO metrics for secondary timelines are de-registered when the timeline
     is removed
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     env = neon_env_builder.init_configs()
     env.start()

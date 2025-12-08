@@ -1,18 +1,19 @@
 import re
 
 import pytest
-from fixtures.neon_fixtures import NeonEnv
+from fixtures.neon_fixtures import NeonEnvBuilder
 from fixtures.utils import run_only_on_default_postgres
 
 
 @pytest.mark.parametrize("what", ["default", "top_level", "nested"])
 @run_only_on_default_postgres(reason="does not use postgres")
-def test_unknown_config_items_handling(neon_simple_env: NeonEnv, what: str):
+def test_unknown_config_items_handling(neon_env_builder: NeonEnvBuilder, what: str):
     """
     Ensure we log unknown config fields and expose a metric for alerting.
     There are more unit tests in the Rust code for other TOML items.
     """
-    env = neon_simple_env
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
 
     def edit_fn(config) -> str | None:
         if what == "default":

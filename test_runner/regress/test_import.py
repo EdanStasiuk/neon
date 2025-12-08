@@ -86,6 +86,7 @@ def test_import_from_vanilla(test_output_dir, pg_bin, vanilla_pg, neon_env_build
     timeline = TimelineId.generate()
 
     # Set up pageserver for import
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
     neon_env_builder.storage_controller_config = {
         "timelines_onto_safekeepers": True,
@@ -151,6 +152,7 @@ def test_import_from_vanilla(test_output_dir, pg_bin, vanilla_pg, neon_env_build
 def test_import_from_pageserver_small(
     pg_bin: PgBin, neon_env_builder: NeonEnvBuilder, test_output_dir: Path
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
     env = neon_env_builder.init_start()
 

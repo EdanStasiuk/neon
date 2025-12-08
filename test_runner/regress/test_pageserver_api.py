@@ -61,8 +61,9 @@ def check_client(env: NeonEnv, client: PageserverHttpClient):
         assert TimelineId(timeline_details["timeline_id"]) == timeline_id
 
 
-def test_pageserver_http_get_wal_receiver_not_found(neon_simple_env: NeonEnv):
-    env = neon_simple_env
+def test_pageserver_http_get_wal_receiver_not_found(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
     with env.pageserver.http_client() as client:
         tenant_id, timeline_id = env.create_tenant()
 
@@ -110,8 +111,9 @@ def expect_updated_msg_lsn(
 #
 # These fields used to be returned by a separate API call, but they're part of
 # `timeline_details` now.
-def test_pageserver_http_get_wal_receiver_success(neon_simple_env: NeonEnv):
-    env = neon_simple_env
+def test_pageserver_http_get_wal_receiver_success(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
     with env.pageserver.http_client() as client:
         tenant_id, timeline_id = env.create_tenant()
         endpoint = env.endpoints.create_start(DEFAULT_BRANCH_NAME, tenant_id=tenant_id)
@@ -146,6 +148,7 @@ def test_pageserver_http_api_client(neon_simple_env: NeonEnv):
 
 @run_only_on_default_postgres("it does not use any postgres functionality")
 def test_pageserver_http_index_part_force_patch(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     tenant_id = env.initial_tenant
     timeline_id = env.initial_timeline
@@ -168,6 +171,7 @@ def test_pageserver_http_index_part_force_patch(neon_env_builder: NeonEnvBuilder
 
 def test_pageserver_get_tenant_visible_size(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.num_pageservers = 1
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     env.create_tenant(shard_count=4)
     env.create_tenant(shard_count=2)

@@ -23,6 +23,7 @@ def test_pageserver_restart(neon_env_builder: NeonEnvBuilder):
     # Hence, bump the max delay here to not skip over the activation.
     neon_env_builder.pageserver_config_override = 'background_task_maximum_delay="20s"'
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     endpoint = env.endpoints.create_start("main")

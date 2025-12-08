@@ -126,6 +126,7 @@ def test_deferred_deletion(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(
         RemoteStorageKind.MOCK_S3,
     )
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     env = neon_env_builder.init_start(initial_tenant_conf=TENANT_CONF)
 
@@ -203,6 +204,7 @@ def test_deletion_queue_recovery(
     neon_env_builder.enable_pageserver_remote_storage(
         RemoteStorageKind.MOCK_S3,
     )
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     env = neon_env_builder.init_start(initial_tenant_conf=TENANT_CONF)
 
@@ -315,6 +317,7 @@ def test_emergency_mode(neon_env_builder: NeonEnvBuilder, pg_bin: PgBin):
     neon_env_builder.enable_pageserver_remote_storage(
         RemoteStorageKind.MOCK_S3,
     )
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=TENANT_CONF)
 
     ps_http = env.pageserver.http_client()
@@ -410,6 +413,7 @@ def test_eviction_across_generations(neon_env_builder: NeonEnvBuilder):
     and must be constructed using the proper generation for the layer, which may not be the same generation
     that the tenant is running in.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(
         RemoteStorageKind.MOCK_S3,
     )
@@ -439,6 +443,7 @@ def test_multi_attach(
     neon_env_builder: NeonEnvBuilder,
     pg_bin: PgBin,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 3
     neon_env_builder.enable_pageserver_remote_storage(
         remote_storage_kind=RemoteStorageKind.MOCK_S3,
@@ -538,6 +543,7 @@ def test_upgrade_generationless_local_file_paths(
     generation numbers: it should accept these layer files, and avoid doing
     a delete/download cycle on them.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = 2
     env = neon_env_builder.init_configs()
     env.start()
@@ -635,6 +641,7 @@ def test_old_index_time_threshold(
     """
 
     # Run with local_fs because we will interfere with mtimes by local filesystem access
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
     env = neon_env_builder.init_start()
     tenant_id = env.initial_tenant
