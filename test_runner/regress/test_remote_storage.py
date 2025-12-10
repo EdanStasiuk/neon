@@ -72,6 +72,8 @@ def test_remote_storage_backup_and_restore(
     data_id = 1
     data = "just some data"
 
+    neon_env_builder.auth_enabled = False
+
     ##### First start, insert data and upload it to the remote storage
     env = neon_env_builder.init_start()
 
@@ -224,6 +226,7 @@ def test_remote_storage_backup_and_restore(
 def test_remote_storage_upload_queue_retries(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start()
@@ -386,6 +389,7 @@ def test_remote_storage_upload_queue_retries(
 def test_remote_timeline_client_calls_started_metric(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     # thinking about using a shared environment? the test assumes that global
@@ -529,6 +533,7 @@ def test_remote_timeline_client_calls_started_metric(
 def test_timeline_deletion_with_files_stuck_in_upload_queue(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start(
@@ -644,6 +649,7 @@ def test_timeline_deletion_with_files_stuck_in_upload_queue(
 # Branches off a root branch, but does not write anything to the new branch, so it has a metadata file only.
 # Ensures that such branch is still persisted on the remote storage, and can be restored during tenant (re)attach.
 def test_empty_branch_remote_storage_upload(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start()
@@ -691,6 +697,7 @@ def test_empty_branch_remote_storage_upload_on_restart(neon_env_builder: NeonEnv
     — the upload should be scheduled by load, and create_timeline should await
     for it even though it gets 409 Conflict.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start()

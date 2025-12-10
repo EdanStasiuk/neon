@@ -331,6 +331,8 @@ def test_import_completion_on_restart(
     vanilla_pg.start()
     vanilla_pg.stop()
 
+    neon_env_builder.auth_enabled = False
+
     env = neon_env_builder.init_configs()
     env.start()
 
@@ -416,6 +418,8 @@ def test_import_respects_timeline_lifecycle(
 
     vanilla_pg.start()
     vanilla_pg.stop()
+
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_configs()
     env.start()
@@ -771,6 +775,7 @@ def test_fast_import_with_pageserver_ingest(
         f"http://{cplane_mgmt_api_server.host}:{cplane_mgmt_api_server.port}/storage/api/v1/"
     )
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
     env = neon_env_builder.init_start()
 

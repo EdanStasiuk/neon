@@ -71,6 +71,7 @@ async def update_and_gc(env: NeonEnv, endpoint: Endpoint, timeline: TimelineId):
 # (repro for https://github.com/neondatabase/neon/issues/1047)
 #
 def test_gc_aggressive(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     # Disable pitr, because here we want to test branch creation after GC
     env = neon_env_builder.init_start(initial_tenant_conf={"pitr_interval": "0 sec"})
     timeline = env.create_branch("test_gc_aggressive", ancestor_branch_name="main")
@@ -100,6 +101,7 @@ def test_gc_aggressive(neon_env_builder: NeonEnvBuilder):
 def test_gc_index_upload(neon_env_builder: NeonEnvBuilder):
     num_index_uploads = 0
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
     # Disable time-based pitr, we will use LSN-based thresholds in the manual GC calls
     env = neon_env_builder.init_start(initial_tenant_conf={"pitr_interval": "0 sec"})

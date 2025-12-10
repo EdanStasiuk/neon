@@ -331,6 +331,7 @@ def test_pageserver_gc_compaction_idempotent(
         "lsn_lease_length": "0s",
     }
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=SMOKE_CONF)
     tenant_id = env.initial_tenant
     timeline_id = env.initial_timeline
@@ -597,6 +598,7 @@ def test_pageserver_small_tenant_compaction(neon_env_builder: NeonEnvBuilder):
         "lsn_lease_length": "0s",
     }
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=SMOKE_CONF)
     tenant_id = env.initial_tenant
     timeline_id = env.initial_timeline
@@ -670,6 +672,7 @@ def test_sharding_compaction(
     # Disable compression, as we can't estimate the size of layers with compression enabled
     # TODO: implement eager layer cutting during compaction
     neon_env_builder.pageserver_config_override = "image_compression='disabled'"
+    neon_env_builder.auth_enabled = False
 
     neon_env_builder.num_pageservers = 1 if shard_count is None else shard_count
     env = neon_env_builder.init_start(
@@ -777,6 +780,7 @@ def test_uploads_and_deletions(
         "compaction_algorithm": json.dumps({"kind": compaction_algorithm.value}),
         "lsn_lease_length": "0s",
     }
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=tenant_conf)
 
     # TODO remove these allowed errors
@@ -821,6 +825,7 @@ def test_pageserver_compaction_circuit_breaker(neon_env_builder: NeonEnvBuilder)
     FAILPOINT = "delta-layer-writer-fail-before-finish"
     BROKEN_LOG = ".*Circuit breaker broken!.*"
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=TENANT_CONF)
 
     workload = Workload(env, env.initial_tenant, env.initial_timeline)
@@ -882,6 +887,7 @@ def test_ps_corruption_detection_feedback(neon_env_builder: NeonEnvBuilder):
         "compaction_period": "1s",
     }
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=TENANT_CONF)
     # We are simulating compaction failures so we should allow these error messages.
     env.pageserver.allowed_errors.append(".*Compaction failed.*")
@@ -969,6 +975,7 @@ def test_image_layer_compression(neon_env_builder: NeonEnvBuilder, enabled: bool
     else:
         neon_env_builder.pageserver_config_override = "image_compression='disabled'"
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=tenant_conf)
 
     tenant_id = env.initial_tenant
@@ -1069,6 +1076,7 @@ def test_image_layer_creation_time_threshold(neon_env_builder: NeonEnvBuilder):
 
     neon_env_builder.num_pageservers = 1
     neon_env_builder.num_safekeepers = 1
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_conf=tenant_conf,
         initial_tenant_shard_count=2,
@@ -1130,6 +1138,7 @@ def test_image_layer_force_creation_period(neon_env_builder: NeonEnvBuilder):
 
     neon_env_builder.num_pageservers = 1
     neon_env_builder.num_safekeepers = 1
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=tenant_conf)
 
     tenant_id = env.initial_tenant
