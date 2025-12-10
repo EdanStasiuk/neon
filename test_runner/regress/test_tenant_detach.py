@@ -71,6 +71,7 @@ def test_tenant_reattach(neon_env_builder: NeonEnvBuilder, mode: str):
     # first time. The retries print INFO-messages to the log; we will check
     # that they are present after the test.
     neon_env_builder.pageserver_config_override = "test_remote_failures=1"
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
     pageserver_http = env.pageserver.http_client()
@@ -270,6 +271,7 @@ def test_tenant_reattach_while_busy(
 
 
 def test_tenant_detach_smoke(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf={"lsn_lease_length": "0s"})
     pageserver_http = env.pageserver.http_client()
 
@@ -338,6 +340,7 @@ def test_detach_while_attaching(
     neon_env_builder: NeonEnvBuilder,
 ):
     ##### First start, insert secret data and upload it to the remote storage
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     pageserver_http = env.pageserver.http_client()
     endpoint = env.endpoints.create_start("main")
@@ -405,6 +408,7 @@ def test_detach_while_activating(
     Test cancellation behavior for tenants that are stuck somewhere between
     being attached and reaching Active state.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start()
@@ -489,6 +493,7 @@ def ensure_test_data(data_id: int, data: str, endpoint: Endpoint):
 def test_metrics_while_ignoring_broken_tenant_and_reloading(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     client = env.pageserver.http_client()

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 @pytest.mark.timeout(600)
 def test_compute_pageserver_connection_stress(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     env.pageserver.allowed_errors.append(".*simulated connection error.*")  # this is never hit
 
@@ -90,6 +91,7 @@ def test_compute_pageserver_hung_connections(neon_env_builder: NeonEnvBuilder):
     """
     Test timeouts in waiting for response to pageserver request
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     env.pageserver.allowed_errors.append(".*slow GetPage.*")
     pageserver_http = env.pageserver.http_client()
@@ -178,6 +180,7 @@ def test_compute_pageserver_statement_timeout(neon_env_builder: NeonEnvBuilder):
     """
     Test statement_timeout while waiting for response to pageserver request
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     env.pageserver.allowed_errors.append(".*slow GetPage.*")
     pageserver_http = env.pageserver.http_client()

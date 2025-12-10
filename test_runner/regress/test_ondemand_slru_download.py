@@ -15,6 +15,8 @@ def test_ondemand_download_pg_xact(neon_env_builder: NeonEnvBuilder, shard_count
     if shard_count is not None:
         neon_env_builder.num_pageservers = shard_count
 
+    neon_env_builder.auth_enabled = False
+
     tenant_conf = {
         "lazy_slru_download": True,
         # set PITR interval to be small, so we can do GC

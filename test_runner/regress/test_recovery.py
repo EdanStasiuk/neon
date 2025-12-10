@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 # Test pageserver recovery after crash
 #
 def test_pageserver_recovery(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     # Override default checkpointer settings to run it more often.
     # This also creates a bunch more L0 layers, so disable backpressure.
     env = neon_env_builder.init_start(

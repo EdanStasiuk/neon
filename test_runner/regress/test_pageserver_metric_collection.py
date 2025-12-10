@@ -76,6 +76,7 @@ def test_metric_collection(
         metrics_handler
     )
 
+    neon_env_builder.auth_enabled = False
     # spin up neon,  after http server is ready
     env = neon_env_builder.init_start(initial_tenant_conf={"pitr_interval": "0 sec"})
     # httpserver is shut down before pageserver during passing run
@@ -220,6 +221,8 @@ def test_metric_collection_cleans_up_tempfile(
         assert is_last in ["true", "false"]
         uploads.put((events, is_last == "true"))
         return Response(status=200)
+
+    neon_env_builder.auth_enabled = False
 
     # Require collecting metrics frequently, since we change
     # the timeline and want something to be logged about it.

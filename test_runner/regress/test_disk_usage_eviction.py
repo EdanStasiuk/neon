@@ -49,6 +49,7 @@ ATIME_RESOLUTION = 2
 def test_min_resident_size_override_handling(
     neon_env_builder: NeonEnvBuilder, config_level_override: int
 ):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     vps_http = env.storage_controller.pageserver_api()
     ps_http = env.pageserver.http_client()
@@ -638,6 +639,7 @@ def test_fast_growing_tenant(neon_env_builder: NeonEnvBuilder, pg_bin: PgBin, or
     Assert that with relative order modes, the disk usage based eviction is
     more fair towards the smaller tenants.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_configs()
     env.start()
     env.pageserver.allowed_errors.append(r".* running disk usage based eviction due to pressure.*")
@@ -931,6 +933,8 @@ def test_import_timeline_disk_pressure_eviction(
     target_relblock_size = 1024 * 1024 * 128
     populate_vanilla_pg(vanilla_pg, target_relblock_size)
     vanilla_pg.stop()
+
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_configs()
     env.start()

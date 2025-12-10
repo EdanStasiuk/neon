@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_pageserver_getpage_throttle(neon_env_builder: NeonEnvBuilder, pg_bin: PgBin):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     env.pageserver.tenant_detach(env.initial_tenant)

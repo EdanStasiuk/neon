@@ -35,6 +35,7 @@ def test_tenant_config(neon_env_builder: NeonEnvBuilder):
             "threshold": "23 hours",
         }
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.pageserver_config_override = set_some_nondefault_global_config
 
     env = neon_env_builder.init_start()
@@ -216,6 +217,7 @@ def test_tenant_config(neon_env_builder: NeonEnvBuilder):
 def test_creating_tenant_conf_after_attach(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     assert isinstance(env.pageserver_remote_storage, LocalFsStorage)
 
@@ -251,6 +253,7 @@ def test_creating_tenant_conf_after_attach(neon_env_builder: NeonEnvBuilder):
 def test_live_reconfig_get_evictions_low_residence_duration_metric_threshold(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
 
     env = neon_env_builder.init_start(
@@ -355,6 +358,7 @@ def test_tenant_config_patch(neon_env_builder: NeonEnvBuilder, ps_managed_by: st
 
         assert lhs == rhs
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     if ps_managed_by == "storcon":

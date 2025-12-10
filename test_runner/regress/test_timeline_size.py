@@ -39,8 +39,9 @@ if TYPE_CHECKING:
     from fixtures.port_distributor import PortDistributor
 
 
-def test_timeline_size(neon_simple_env: NeonEnv):
-    env = neon_simple_env
+def test_timeline_size(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
     new_timeline_id = env.create_branch("test_timeline_size", ancestor_branch_name="main")
 
     client = env.pageserver.http_client()
@@ -323,6 +324,7 @@ def test_timeline_size_quota(neon_env_builder: NeonEnvBuilder):
 def test_timeline_initial_logical_size_calculation_cancellation(
     neon_env_builder: NeonEnvBuilder, deletion_method: str
 ):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     client = env.pageserver.http_client()
 
@@ -377,6 +379,7 @@ def test_timeline_initial_logical_size_calculation_cancellation(
 
 def test_timeline_physical_size_init(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -409,6 +412,7 @@ def test_timeline_physical_size_init(neon_env_builder: NeonEnvBuilder):
 
 def test_timeline_physical_size_post_checkpoint(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -438,6 +442,7 @@ def test_timeline_physical_size_post_checkpoint(neon_env_builder: NeonEnvBuilder
 
 def test_timeline_physical_size_post_compaction(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
+    neon_env_builder.auth_enabled = False
 
     # Disable background compaction as we don't want it to happen after `get_physical_size` request
     # and before checking the expected size on disk, which makes the assertion failed
@@ -486,6 +491,7 @@ def test_timeline_physical_size_post_compaction(neon_env_builder: NeonEnvBuilder
 
 def test_timeline_physical_size_post_gc(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
+    neon_env_builder.auth_enabled = False
 
     # Disable background compaction and GC as we don't want it to happen after `get_physical_size` request
     # and before checking the expected size on disk, which makes the assertion failed
@@ -537,13 +543,14 @@ def test_timeline_physical_size_post_gc(neon_env_builder: NeonEnvBuilder):
 # The timeline logical and physical sizes are also exposed as prometheus metrics.
 # Test the metrics.
 def test_timeline_size_metrics(
-    neon_simple_env: NeonEnv,
+    neon_env_builder: NeonEnvBuilder,
     test_output_dir: Path,
     port_distributor: PortDistributor,
     pg_distrib_dir: Path,
     pg_version: PgVersion,
 ):
-    env = neon_simple_env
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
     pageserver_http = env.pageserver.http_client()
 
     new_timeline_id = env.create_branch("test_timeline_size_metrics")
@@ -617,6 +624,7 @@ def test_tenant_physical_size(neon_env_builder: NeonEnvBuilder):
     random.seed(100)
 
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.LOCAL_FS)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -737,6 +745,7 @@ def test_ondemand_activation(neon_env_builder: NeonEnvBuilder):
     # We will run with the limit set to 1, so that once we have one tenant stuck
     # in a pausable failpoint, the rest are prevented from proceeding through warmup.
     neon_env_builder.pageserver_config_override = "concurrent_tenant_warmup = 1"
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
     pageserver_http = env.pageserver.http_client()
@@ -933,6 +942,7 @@ def test_timeline_logical_size_task_priority(neon_env_builder: NeonEnvBuilder):
     3. A fail point (walreceiver-after-ingest) is used to pause the walreceiver since
     otherwise it would force the logical size computation.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     client = env.pageserver.http_client()
 
@@ -988,6 +998,7 @@ def test_timeline_logical_size_task_priority(neon_env_builder: NeonEnvBuilder):
 
 def test_eager_attach_does_not_queue_up(neon_env_builder: NeonEnvBuilder):
     neon_env_builder.pageserver_config_override = "concurrent_tenant_warmup = 1"
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -1066,6 +1077,7 @@ def test_eager_attach_does_not_queue_up(neon_env_builder: NeonEnvBuilder):
 def test_lazy_attach_activation(neon_env_builder: NeonEnvBuilder, activation_method: str):
     # env.initial_tenant will take up this permit when attaching with lazy because of a failpoint activated after restart
     neon_env_builder.pageserver_config_override = "concurrent_tenant_warmup = 1"
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 

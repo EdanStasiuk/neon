@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 # Create a couple of branches off the main branch, at a historical point in time.
 #
 def test_branch_behind(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     # Disable pitr, because here we want to test branch creation after GC
     env = neon_env_builder.init_start(
         initial_tenant_conf={"pitr_interval": "0 sec", "lsn_lease_length": "0s"}

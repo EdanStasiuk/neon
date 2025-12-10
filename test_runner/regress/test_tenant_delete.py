@@ -58,6 +58,7 @@ def test_tenant_delete_smoke(
     neon_env_builder: NeonEnvBuilder,
     pg_bin: PgBin,
 ):
+    neon_env_builder.auth_enabled = False
     neon_env_builder.pageserver_config_override = "test_remote_failures=1"
 
     remote_storage_kind = s3_storage()
@@ -143,6 +144,7 @@ def test_tenant_delete_smoke(
 def test_long_timeline_create_cancelled_by_tenant_delete(neon_env_builder: NeonEnvBuilder):
     """Reproduction of 2023-11-23 stuck tenants investigation"""
 
+    neon_env_builder.auth_enabled = False
     # do not use default tenant/timeline creation because it would output the failpoint log message too early
     env = neon_env_builder.init_configs()
     env.start()
@@ -222,6 +224,7 @@ def test_tenant_delete_races_timeline_creation(neon_env_builder: NeonEnvBuilder)
     # (and there is no way to reconstruct the used remote storage kind)
     remote_storage_kind = RemoteStorageKind.MOCK_S3
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=many_small_layers_tenant_config())
     ps_http = env.pageserver.http_client()
     tenant_id = env.initial_tenant
@@ -341,6 +344,7 @@ def test_tenant_delete_scrubber(pg_bin: PgBin, make_httpserver, neon_env_builder
 
     remote_storage_kind = RemoteStorageKind.MOCK_S3
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_conf=many_small_layers_tenant_config())
 
     ps_http = env.pageserver.http_client()
@@ -419,6 +423,7 @@ def test_tenant_delete_stale_shards(neon_env_builder: NeonEnvBuilder, pg_bin: Pg
     """
     remote_storage_kind = s3_storage()
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 

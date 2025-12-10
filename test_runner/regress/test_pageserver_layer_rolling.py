@@ -138,6 +138,7 @@ def test_pageserver_small_inmemory_layers(
         "compaction_period": "1s",
     }
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_configs()
     env.start()
 
@@ -187,6 +188,7 @@ def test_idle_checkpoints(neon_env_builder: NeonEnvBuilder):
         "compaction_period": "1s",
     }
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_configs()
     env.start()
 

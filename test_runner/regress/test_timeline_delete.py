@@ -11,7 +11,6 @@ import requests
 from fixtures.common_types import Lsn, TenantId, TimelineId
 from fixtures.log_helper import log
 from fixtures.neon_fixtures import (
-    NeonEnv,
     NeonEnvBuilder,
     PgBin,
     last_flush_lsn_upload,
@@ -37,8 +36,9 @@ from fixtures.utils import query_scalar, run_pg_bench_small, wait_until
 from urllib3.util.retry import Retry
 
 
-def test_timeline_delete(neon_simple_env: NeonEnv):
-    env = neon_simple_env
+def test_timeline_delete(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
 
     env.pageserver.allowed_errors.extend(
         [
@@ -162,6 +162,7 @@ def test_delete_timeline_exercise_crash_safety_failpoints(
     """
     remote_storage_kind = s3_storage()
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start(
         initial_tenant_conf={
@@ -294,6 +295,7 @@ def test_timeline_resurrection_on_attach(
     """
 
     ##### First start, insert data and upload it to the remote storage
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     ps_http = env.pageserver.http_client()
@@ -377,6 +379,7 @@ def test_timeline_delete_fail_before_local_delete(neon_env_builder: NeonEnvBuild
     """
 
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -492,6 +495,7 @@ def test_concurrent_timeline_delete_stuck_on(
     """
 
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -569,6 +573,7 @@ def test_delete_timeline_client_hangup(neon_env_builder: NeonEnvBuilder):
     This tests cancel safety up to the given failpoint.
     """
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -626,6 +631,7 @@ def test_timeline_delete_works_for_remote_smoke(
     neon_env_builder: NeonEnvBuilder,
 ):
     neon_env_builder.enable_pageserver_remote_storage(s3_storage())
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
 
@@ -700,6 +706,7 @@ def test_delete_orphaned_objects(
 ):
     remote_storage_kind = RemoteStorageKind.LOCAL_FS
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start(
         initial_tenant_conf={
@@ -763,6 +770,7 @@ def test_timeline_delete_resumed_on_attach(
 ):
     remote_storage_kind = s3_storage()
     neon_env_builder.enable_pageserver_remote_storage(remote_storage_kind)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start(initial_tenant_conf=many_small_layers_tenant_config())
 
