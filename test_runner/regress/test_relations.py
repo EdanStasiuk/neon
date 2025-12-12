@@ -13,6 +13,7 @@ from fixtures.neon_fixtures import wait_for_last_flush_lsn
 def test_pageserver_reldir_v2(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_conf={
             "rel_size_v2_enabled": "false",

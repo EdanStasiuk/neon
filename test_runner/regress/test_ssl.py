@@ -221,6 +221,7 @@ def test_storage_broker_https_api(neon_env_builder: NeonEnvBuilder):
     1. Make /status request to HTTPS API to ensure it's appropriately configured.
     2. Generate simple workload to ensure that SK -> broker -> PS communication works well.
     """
+    neon_env_builder.auth_enabled = False
     neon_env_builder.use_https_storage_broker_api = True
     env = neon_env_builder.init_start()
 

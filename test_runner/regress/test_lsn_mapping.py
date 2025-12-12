@@ -32,6 +32,7 @@ def test_lsn_mapping(neon_env_builder: NeonEnvBuilder, with_lease: bool):
 
     :param with_lease: Whether to get a lease associated with returned LSN.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     tenant_id, _ = env.create_tenant(
@@ -146,6 +147,7 @@ def test_get_lsn_by_timestamp_cancelled(neon_env_builder: NeonEnvBuilder):
     Added as an effort to improve error handling and avoid full anyhow backtrace.
     """
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     env.pageserver.allowed_errors.extend(
         [
@@ -188,6 +190,7 @@ def test_get_lsn_by_timestamp_cancelled(neon_env_builder: NeonEnvBuilder):
 def test_ts_of_lsn_api(neon_env_builder: NeonEnvBuilder):
     key_not_found_error = r".*could not find data for key.*"
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     new_timeline_id = env.create_branch("test_ts_of_lsn_api")
@@ -287,6 +290,7 @@ def test_timestamp_of_lsn_empty_branch(neon_env_builder: NeonEnvBuilder):
 
     Reproducer for https://github.com/neondatabase/neon/issues/11439
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     # Create a new branch

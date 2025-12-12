@@ -87,6 +87,7 @@ def test_ancestor_detach_branched_from(
     """
     Creates a branch relative to L0 lsn boundary according to Branchpoint. Later the timeline is detached.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     env.pageserver.allowed_errors.extend(SHUTDOWN_ALLOWED_ERRORS)
@@ -245,6 +246,7 @@ def test_ancestor_detach_reparents_earlier(neon_env_builder: NeonEnvBuilder):
     We confirm the end result by being able to delete "old main" after deleting "after".
     """
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     env.pageserver.allowed_errors.extend(SHUTDOWN_ALLOWED_ERRORS)
@@ -374,6 +376,7 @@ def test_ancestor_detach_behavior_v2(neon_env_builder: NeonEnvBuilder, snapshots
     new main -------|---------|----> branch-to-detach
     """
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     env.pageserver.allowed_errors.extend(SHUTDOWN_ALLOWED_ERRORS)
@@ -539,6 +542,7 @@ def test_detached_receives_flushes_while_being_detached(neon_env_builder: NeonEn
     Makes sure that the timeline is able to receive writes through-out the detach process.
     """
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     client = env.pageserver.http_client()
@@ -638,6 +642,7 @@ def test_compaction_induced_by_detaches_in_history(
     timeline broken.
     """
 
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_conf={
             # we want to create layers manually so we don't branch on arbitrary
@@ -779,6 +784,7 @@ def test_timeline_ancestor_detach_idempotent_success(
     shards_after = shards_initial_after[1]
 
     neon_env_builder.num_pageservers = shards_after
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_shard_count=shards_initial if shards_initial > 1 else None,
         initial_tenant_conf={
@@ -857,6 +863,7 @@ def test_timeline_ancestor_detach_errors(neon_env_builder: NeonEnvBuilder, shard
     shards = 2 if sharded else 1
 
     neon_env_builder.num_pageservers = shards
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_shard_count=shards if sharded else None,
         initial_tenant_conf={
@@ -935,6 +942,7 @@ def test_sharded_timeline_detach_ancestor(neon_env_builder: NeonEnvBuilder):
     shard_count = 4
     neon_env_builder.num_pageservers = shard_count
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start(initial_tenant_shard_count=shard_count)
     for ps in env.pageservers:
@@ -1092,6 +1100,7 @@ def test_timeline_detach_ancestor_interrupted_by_deletion(
 
     shard_count = 2 if sharded else 1
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.num_pageservers = shard_count
 
     env = neon_env_builder.init_start(
@@ -1224,6 +1233,7 @@ def test_sharded_tad_interleaved_after_partial_success(neon_env_builder: NeonEnv
 
     shard_count = 2
     neon_env_builder.num_pageservers = shard_count
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_shard_count=shard_count)
 
     for ps in env.pageservers:
@@ -1424,6 +1434,7 @@ def test_retryable_500_hit_through_storcon_during_timeline_detach_ancestor(
 ):
     shard_count = 2
     neon_env_builder.num_pageservers = shard_count
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(initial_tenant_shard_count=shard_count)
 
     for ps in env.pageservers:
@@ -1518,6 +1529,7 @@ def test_retried_detach_ancestor_after_failed_reparenting(neon_env_builder: Neon
 
     # to get the remote storage metrics
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_conf={
             "gc_period": "1s",
@@ -1691,6 +1703,8 @@ def test_timeline_is_deleted_before_timeline_detach_ancestor_completes(
     """
     Make sure that a timeline deleted after restart will unpause gc blocking.
     """
+    neon_env_builder.auth_enabled = False
+
     env = neon_env_builder.init_start(
         initial_tenant_conf={
             "gc_period": "1s",
@@ -1818,6 +1832,7 @@ def test_timeline_detach_with_aux_files_with_detach_v1(
     We had a bug where detach_ancestor running on a child branch would copy aux files key range from child to parent,
     thereby making parent aux files reappear.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start(
         initial_tenant_conf={
             "gc_period": "1s",
@@ -1892,6 +1907,7 @@ def test_timeline_detach_with_aux_files_with_detach_v1(
 def test_detach_ancestors_with_no_writes(
     neon_env_builder: NeonEnvBuilder,
 ):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     endpoint = env.endpoints.create_start("main", tenant_id=env.initial_tenant)

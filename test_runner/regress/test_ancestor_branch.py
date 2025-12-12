@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 # Create ancestor branches off the main branch.
 #
 def test_ancestor_branch(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
     pageserver_http = env.pageserver.http_client()
 

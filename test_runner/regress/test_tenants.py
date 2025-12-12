@@ -35,18 +35,20 @@ if TYPE_CHECKING:
     from prometheus_client.samples import Sample
 
 
-def test_tenant_creation_fails(neon_simple_env: NeonEnv):
-    tenants_dir = neon_simple_env.pageserver.tenant_dir()
+def test_tenant_creation_fails(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
+    env = neon_env_builder.init_start()
+    tenants_dir = env.pageserver.tenant_dir()
     initial_tenants = sorted(
-        map(lambda t: t.split()[0], neon_simple_env.neon_cli.tenant_list().stdout.splitlines())
+        map(lambda t: t.split()[0], env.neon_cli.tenant_list().stdout.splitlines())
     )
     [d for d in tenants_dir.iterdir()]
 
     error_regexes = [".*tenant-config-before-write.*"]
-    neon_simple_env.pageserver.allowed_errors.extend(error_regexes)
-    neon_simple_env.storage_controller.allowed_errors.extend(error_regexes)
+    env.pageserver.allowed_errors.extend(error_regexes)
+    env.storage_controller.allowed_errors.extend(error_regexes)
 
-    pageserver_http = neon_simple_env.pageserver.http_client()
+    pageserver_http = env.pageserver.http_client()
 
     # Failure to write a config to local disk makes the pageserver assume that local disk is bad and abort the process
     pageserver_http.configure_failpoints(("tenant-config-before-write", "return"))
@@ -54,22 +56,22 @@ def test_tenant_creation_fails(neon_simple_env: NeonEnv):
     tenant_id = TenantId.generate()
 
     with pytest.raises(requests.exceptions.ConnectionError, match="Connection aborted"):
-        neon_simple_env.pageserver.http_client().tenant_attach(tenant_id=tenant_id, generation=1)
+        env.pageserver.http_client().tenant_attach(tenant_id=tenant_id, generation=1)
 
     # Any files left behind on disk during failed creation do not prevent
     # a retry from succeeding.  Restart pageserver with no failpoints.
-    neon_simple_env.pageserver.running = False
-    neon_simple_env.pageserver.start()
+    env.pageserver.running = False
+    env.pageserver.start()
 
     # The failed creation should not be present in list of tenants, as when we start up we'll see
     # an empty tenant dir with no config in it.
-    neon_simple_env.pageserver.allowed_errors.append(".*Failed to load tenant config.*")
+    env.pageserver.allowed_errors.append(".*Failed to load tenant config.*")
     new_tenants = sorted(
-        map(lambda t: t.split()[0], neon_simple_env.neon_cli.tenant_list().stdout.splitlines())
+        map(lambda t: t.split()[0], env.neon_cli.tenant_list().stdout.splitlines())
     )
     assert initial_tenants == new_tenants, "should not create new tenants"
 
-    neon_simple_env.create_tenant()
+    env.create_tenant()
 
 
 def test_tenants_normal_work(neon_env_builder: NeonEnvBuilder):
@@ -253,6 +255,7 @@ def test_pageserver_metrics_removed_after_detach(neon_env_builder: NeonEnvBuilde
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
 
     neon_env_builder.num_safekeepers = 3
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
     tenant_1, _ = env.create_tenant()
@@ -306,6 +309,7 @@ def test_pageserver_metrics_removed_after_offload(
 
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
     neon_env_builder.num_safekeepers = 3
+    neon_env_builder.auth_enabled = False
 
     env = neon_env_builder.init_start()
     tenant_1, _ = env.create_tenant(
@@ -386,6 +390,7 @@ def test_pageserver_metrics_removed_after_offload(
 
 
 def test_pageserver_with_empty_tenants(neon_env_builder: NeonEnvBuilder):
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_start()
 
     env.pageserver.allowed_errors.extend(
@@ -460,6 +465,7 @@ def test_create_churn_during_restart(neon_env_builder: NeonEnvBuilder):
     - Issues with interrupting/resuming tenant/timeline creation in shutdown
     - Issues with a timeline is not created successfully because of restart.
     """
+    neon_env_builder.auth_enabled = False
     env = neon_env_builder.init_configs()
     env.start()
     tenant_id: TenantId = env.initial_tenant
@@ -530,6 +536,7 @@ def test_create_churn_during_restart(neon_env_builder: NeonEnvBuilder):
 def test_pageserver_metrics_many_relations(neon_env_builder: NeonEnvBuilder):
     """Test for the directory_entries_count metric"""
 
+    neon_env_builder.auth_enabled = False
     neon_env_builder.enable_pageserver_remote_storage(RemoteStorageKind.MOCK_S3)
 
     env = neon_env_builder.init_start()
